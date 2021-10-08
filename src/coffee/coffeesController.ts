@@ -18,7 +18,6 @@ export class CoffeesController {
   constructor(private readonly coffeeService: CoffeesService) {}
   @Get()
   findAll(@Query() pagination: PaginationQueryDto) {
-    console.log(pagination);
     return this.coffeeService.findAll(pagination);
   }
 

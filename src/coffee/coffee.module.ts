@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { CoffeesService } from './coffees.service';
 import { CoffeesController } from './coffeesController';
+import { LANGUAGE, StringConst } from '../constant/string.constant';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Coffee, CoffeeSchema } from './entities/coffee.entity';
-import { EventSchema } from '../events/entities/event.entity';
+import { Event, EventSchema } from '../events/entities/event.entity';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { EventSchema } from '../events/entities/event.entity';
     ]),
   ],
   controllers: [CoffeesController],
-  providers: [CoffeesService],
+  providers: [CoffeesService, { provide: LANGUAGE, useClass: StringConst }],
 })
 export class CoffeeModule {}

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Coffee } from './entities/coffee.entity';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
@@ -6,6 +6,7 @@ import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { Event } from '../events/entities/event.entity';
+import { LANGUAGE, StringConst } from '../constant/string.constant';
 
 @Injectable()
 export class CoffeesService {
@@ -13,12 +14,16 @@ export class CoffeesService {
     @InjectModel(Coffee.name) private readonly coffeeModel: Model<Coffee>,
     @InjectModel(Event.name) private readonly eventModel: Model<Event>,
     @InjectConnection() private readonly connection: Connection,
+    @Inject(LANGUAGE)
+    private readonly STRINGS: StringConst,
   ) {}
 
   findAll(pagination: PaginationQueryDto) {
+    console.log(this.STRINGS['es'].HELLO);
     const { limit, offset } = pagination;
     return this.coffeeModel.find().skip(offset).limit(limit);
   }
+
   async findOne(id: string) {
     const coffee = await this.coffeeModel.findOne({ _id: id });
     if (!coffee) throw new NotFoundException();
@@ -67,7 +72,7 @@ export class CoffeesService {
     } catch (e) {
       await session.abortTransaction();
     } finally {
-      session.endSession();
+      await session.endSession();
     }
   }
 }

@@ -7,7 +7,8 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { PaginationQueryDto } from '../common/dto/pagination-query.dto';
 import { Event } from '../events/entities/event.entity';
 import { LANGUAGE, StringConst } from '../constant/string.constant';
-
+import coffeeConfig from './config/coffee.config';
+import { ConfigType } from '@nestjs/config';
 @Injectable()
 export class CoffeesService {
   constructor(
@@ -16,7 +17,11 @@ export class CoffeesService {
     @InjectConnection() private readonly connection: Connection,
     @Inject(LANGUAGE)
     private readonly STRINGS: StringConst,
-  ) {}
+    @Inject(coffeeConfig.KEY)
+    private readonly coffeeConfiguration: ConfigType<typeof coffeeConfig>,
+  ) {
+    console.log(coffeeConfiguration.foo);
+  }
 
   findAll(pagination: PaginationQueryDto) {
     console.log(this.STRINGS['es'].HELLO);

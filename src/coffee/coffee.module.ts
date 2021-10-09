@@ -5,9 +5,12 @@ import { LANGUAGE, StringConst } from '../constant/string.constant';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Coffee, CoffeeSchema } from './entities/coffee.entity';
 import { Event, EventSchema } from '../events/entities/event.entity';
+import { ConfigModule } from '@nestjs/config';
+import coffeeConfig from './config/coffee.config';
 
 @Module({
   imports: [
+    ConfigModule.forFeature(coffeeConfig),
     MongooseModule.forFeature([
       {
         name: Coffee.name,

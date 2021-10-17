@@ -1,39 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Coffee } from './entities/coffee.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
+import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 
 @Injectable()
 export class CoffeesService {
-  private coffees: Coffee[] = [
-    {
-      id: 1,
-      name: 'shipwrek Roase',
-      brand: 'Body Brew',
-      flavor: ['chocolate', 'vanilla'],
-    },
-  ];
+  constructor(
+    @InjectModel(Coffee.name) private readonly coffeeModel: Model<Coffee>,
+  ) {}
 
   findAll() {
-    return this.coffees;
+    return this.coffeeModel.find();
   }
-  findOne(id: string) {
-    return this.coffees.find((it) => it.id === +id);
+  async findOne(id: string) {
+    const coffee = await this.coffeeModel.findOne({ _id: id });
+    if (!coffee) throw new NotFoundException();
+
+    return coffee;
   }
 
-  create(createDto: any) {
-    this.coffees.push(createDto);
-    return createDto;
+  async create(createDto: CreateCoffeeDto) {
+    const coffee = await this.coffeeModel.create(createDto);
+    return coffee;
   }
 
-  update(id: string, updateDto: any) {
-    const existingCoffee = this.findOne(id);
-    if (existingCoffee) {
-      // Update Coffee
-    }
+  async update(id: string, updateDto: UpdateCoffeeDto) {
+    const existingCoffee = this.coffeeModel.findOneAndUpdate(
+      { _id: id },
+      { $set: updateDto },
+      { new: true },
+    );
+    if (!existingCoffee) throw new NotFoundException();
+
+    return existingCoffee;
   }
 
-  remove(id: string) {
-    const existingCoffeeIndex = this.coffees.findIndex((it) => it.id === +id);
-    if (existingCoffeeIndex >= 0) this.coffees.splice(existingCoffeeIndex, 1);
+  async remove(id: string) {
+    const existingCoffeeIndex = await this.findOne(id);
+    return existingCoffeeIndex.remove();
   }
 }

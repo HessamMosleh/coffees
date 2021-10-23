@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This project is a simple implementation of nestjs and implemented with most nestjs features, including CRUD, Pipes, Exception filters, Guards, and config modules. By the way, this project has been implemented  with PostgreSQL(implemented in the master branch) and Mongo(implemented in the mongo-edition branch)
 
 ## Installation
 
